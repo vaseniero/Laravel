@@ -1,4 +1,6 @@
 _*/
+.vscode/
+.vagrant/
 vendor/
 node_modules/
 npm-debug.log
@@ -14,8 +16,10 @@ storage/*.key
 .env.*.php
 .env.php
 .env
+yarn-error.log
 Homestead.yaml
 Homestead.json
 
 # Rocketeer PHP task runner and deployment package. https://github.com/rocketeers/rocketeer
 .rocketeer/
+
