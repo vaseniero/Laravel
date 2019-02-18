@@ -4,6 +4,12 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
+/**
+ * Added by Vicsante Aseniero
+ * Fix Laravel Specified key was too long error
+ */
+use Illuminate\Support\Facades\Schema;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -14,6 +20,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //
+        /**
+         * Added by Vicsante Aseniero
+         * Fix Laravel Specified key was too long error
+         */
+        Schema::defaultStringLength(191);
     }
 
     /**
