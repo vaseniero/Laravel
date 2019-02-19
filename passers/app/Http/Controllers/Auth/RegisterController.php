@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
+use App\Scrape;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -31,12 +32,22 @@ class RegisterController extends Controller
     protected $redirectTo = '/home';
 
     /**
+     * 
+     * @var array
+     */
+    private $crawl;
+
+    /**
      * Create a new controller instance.
      *
      * @return void
      */
     public function __construct()
     {
+        // Scrape & Save DB -> Examinee PSHS NCE Passers
+        $this->crawl = new Scrape;
+        $this->crawl->scrape();
+
         $this->middleware('guest');
     }
 

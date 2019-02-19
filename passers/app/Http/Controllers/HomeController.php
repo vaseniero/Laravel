@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Passer;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -14,9 +14,6 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $crawl = new Passer;
-        $crawl->scrape();
-
         $this->middleware('auth');
     }
 
@@ -26,7 +23,8 @@ class HomeController extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function index()
-    {        
-        return view('home');
+    {
+        $passers = DB::table('passers')->paginate(50);
+        return view('home', compact('passers'));
     }
 }
