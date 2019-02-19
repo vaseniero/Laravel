@@ -1,28 +1,26 @@
 <template>
     <div class="col-md-12">
-        <div class="container">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name of Examinee</th>
-                        <th>Campus Eligibility</th>
-                        <th>School</th>
-                        <th>Division</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="tag in Examinees.data" :key="tag.id">
-                        <td>{{ tag.id }}</td>
-                        <td>{{ tag.name_of_examinee }}</td>
-                        <td>{{ tag.campus_eligibility }}</td>
-                        <td>{{ tag.school }}</td>
-                        <td>{{ tag.division }}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <pagination :data="Examinees" :limit="14" @pagination-change-page="getResults"></pagination>
-        </div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name of Examinee</th>
+                    <th>Campus Eligibility</th>
+                    <th>School</th>
+                    <th>Division</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="tag in Examinees.data" :key="tag.id">
+                    <td>{{ tag.id }}</td>
+                    <td>{{ tag.name_of_examinee }}</td>
+                    <td>{{ tag.campus_eligibility }}</td>
+                    <td>{{ tag.school }}</td>
+                    <td>{{ tag.division }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <pagination :data="Examinees" :limit="10" @pagination-change-page="getResults"></pagination>
     </div>
 </template>
 
