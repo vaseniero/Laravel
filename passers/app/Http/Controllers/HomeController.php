@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Examinee;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
@@ -24,7 +25,13 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $passers = DB::table('passers')->paginate(50);
-        return view('home', compact('passers'));
+        $examinees = Examinee::paginate(50);
+        return view('home', compact('examinees'));
+    }
+
+    public function getExaminees()
+    {
+        $examinees = Examinee::paginate(50);
+        return response()->json($examinees);
     }
 }

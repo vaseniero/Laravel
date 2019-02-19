@@ -1,15 +1,27 @@
 <template>
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card card-default">
-                    <div class="card-header">Example Component</div>
-
-                    <div class="card-body">
-                        I'm an example component.
-                    </div>
-                </div>
-            </div>
+    <div class="col-md-12">
+        <div class="container">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name of Examinee</th>
+                        <th>Campus Eligibility</th>
+                        <th>School</th>
+                        <th>Division</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="tag in Examinees.data" :key="tag.id">
+                        <td>{{ tag.id }}</td>
+                        <td>{{ tag.name_of_examinee }}</td>
+                        <td>{{ tag.campus_eligibility }}</td>
+                        <td>{{ tag.school }}</td>
+                        <td>{{ tag.division }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <pagination :data="Examinees" :limit="14" @pagination-change-page="getResults"></pagination>
         </div>
     </div>
 </template>
@@ -18,6 +30,28 @@
     export default {
         mounted() {
             console.log('Component mounted.')
+        },
+        data() {
+            return {
+                Examinees: {},
+            }
+        },
+        created() {
+            this.getResults();
+        },
+        methods: {
+            getResults(page) {
+                if (typeof page === 'undefined') {
+                    page = 1;
+                }
+      
+                this.$http.get('/examinees?page=' + page)
+                    .then(response => {
+                        return response.json();
+                    }).then(data => {
+                        this.Examinees = data;
+                    });
+            }
         }
     }
 </script>

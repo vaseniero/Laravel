@@ -25,3 +25,5 @@ Route::get('/passers', function() {
         dump($node->text());
     });
 });
+
+Route::get('examinees', 'HomeController@getExaminees')->name('getExaminees');

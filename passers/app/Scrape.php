@@ -15,7 +15,7 @@ class Scrape extends Model
     public function __construct(array $attributes = [])
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0');
-        DB::table('passers')->truncate();
+        DB::table('examinee')->truncate();
 
         $this->row = 0;
         $this->col = 0;
@@ -62,7 +62,7 @@ class Scrape extends Model
         }
 
         if ($col == 5) {
-            DB::table('passers')->insert($obj);
+            DB::table('examinee')->insert($obj);
             $this->col = 1;
             $this->obj = array();
         }
