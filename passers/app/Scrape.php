@@ -61,10 +61,12 @@ class Scrape extends Model
 
         if ($col == 5) {
             DB::table('passers')->insert($obj);
-            $col = 1;
+            $this->col = 1;
+            $this->obj = array();
         }
-
-        $this->col = $col;
-        $this->obj = $obj;
+        else {
+            $this->col = $col;
+            $this->obj = $obj;
+        }
     }
 }
