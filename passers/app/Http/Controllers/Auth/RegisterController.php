@@ -45,6 +45,7 @@ class RegisterController extends Controller
     public function __construct()
     {
         // Scrape & Save DB -> Examinee PSHS NCE Passers
+        // Put Scrape here since this will be triggered only once by the current user
         $this->crawl = new Scrape;
         $this->crawl->scrape();
 
