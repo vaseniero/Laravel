@@ -32,12 +32,6 @@ class RegisterController extends Controller
     protected $redirectTo = '/home';
 
     /**
-     * 
-     * @var array
-     */
-    private $crawl;
-
-    /**
      * Create a new controller instance.
      *
      * @return void
@@ -72,8 +66,8 @@ class RegisterController extends Controller
     {
         // Scrape & Save DB -> Examinee PSHS NCE Passers
         // Put Scrape here since this will be triggered only once by the current user
-        $this->crawl = new Scrape;
-        $this->crawl->scrape();
+        $crawl = new Scrape;
+        $crawl->scrape();
 
         return User::create([
             'name' => $data['name'],

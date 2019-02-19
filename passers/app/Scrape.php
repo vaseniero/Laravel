@@ -29,6 +29,8 @@ class Scrape extends Model
         $crawler->filter('.container_list div .border_list')->each(function ($node) {
             $this->dump_scrape_and_save($node->text(),$this->col,$this->obj);
         });
+
+        $result['success'] = true;
     }
 
     private function dump_scrape_and_save($item,$col,$obj)
