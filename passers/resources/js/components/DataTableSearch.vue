@@ -124,8 +124,6 @@ export default {
         dataFetchUrl = 'examinees/search/datatable?page='+this.currentPage+'&column='+this.sortedColumn+'&order='+this.order+'&per_page='+this.perPage+'&search_column='+this.searchColumn+'&search_term='+this.searchTerm;
       }
 
-      alert('URL: ' + dataFetchUrl);
-
       axios.get(dataFetchUrl)
         .then(data => {
           this.pagination = data.data;
