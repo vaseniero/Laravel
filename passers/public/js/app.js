@@ -1979,7 +1979,7 @@ __webpack_require__.r(__webpack_exports__);
 
       var dataFetchUrl = '';
 
-      if (this.searchTerm == '') {
+      if (this.searchTerm === '') {
         dataFetchUrl = 'examinees/datatable?page=' + this.currentPage + '&column=' + this.sortedColumn + '&order=' + this.order + '&per_page=' + this.perPage;
       } else {
         dataFetchUrl = 'examinees/search/datatable?page=' + this.currentPage + '&column=' + this.sortedColumn + '&order=' + this.order + '&per_page=' + this.perPage + '&search_term=' + this.searchTerm;
