@@ -19,6 +19,7 @@ class ExamineeResource extends JsonResource
          * return parent::toArray($request);
         */
         return [
+            'id'        => $this->id,
             'examinee'  => $this->name_of_examinee,
             'campus'    => $this->campus_eligibility,
             'school'    => $this->school,

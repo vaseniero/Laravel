@@ -23,7 +23,7 @@
 <div id="app" style="padding-top:25px;">
 	<div class="container">
 		<data-table-search
-			fetch-url="{{ route('examinees.search.table') }}"
+			fetch-url="{{ route('examinees.table') }}"
 			:columns="['examinee', 'campus', 'school' , 'division']"></data-table-search>
 	</div>
 </div>

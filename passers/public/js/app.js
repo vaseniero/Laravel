@@ -1896,8 +1896,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     fetchUrl: {
@@ -1923,7 +1921,8 @@ __webpack_require__.r(__webpack_exports__);
       currentPage: 1,
       perPage: 50,
       sortedColumn: this.columns[0],
-      order: 'asc'
+      order: 'asc',
+      searchTerm: ''
     };
   },
   watch: {
@@ -1954,7 +1953,7 @@ __webpack_require__.r(__webpack_exports__);
 
       var to = from + this.offset * 2;
 
-      if (to >= this.pagination.last_page) {
+      if (to >= this.pagination.meta.last_page) {
         to = this.pagination.meta.last_page;
       }
 
@@ -1978,37 +1977,20 @@ __webpack_require__.r(__webpack_exports__);
     fetchData: function fetchData() {
       var _this = this;
 
-      if (typeof this.currentPage === 'undefined') {
-        this.currentPage = 1;
+      var dataFetchUrl = '';
+
+      if (this.searchTerm == '') {
+        dataFetchUrl = 'examinees/datatable?page=' + this.currentPage + '&column=' + this.sortedColumn + '&order=' + this.order + '&per_page=' + this.perPage;
+      } else {
+        dataFetchUrl = 'examinees/search/datatable?page=' + this.currentPage + '&column=' + this.sortedColumn + '&order=' + this.order + '&per_page=' + this.perPage + '&search_term=' + this.searchTerm;
       }
 
-      if (typeof this.sortedColumn === 'undefined') {
-        this.sortedColumn = 'name_of_examinee';
-      }
-
-      if (typeof this.order === 'undefined') {
-        this.order = 'asc';
-      }
-
-      if (typeof this.perPage === 'undefined') {
-        this.perPage = 50;
-      }
-
-      var dataFetchUrl = 'examinees/search/data-table?page=' + this.currentPage + '&column=' + this.sortedColumn + '&order=' + this.order + '&per_page=' + this.perPage;
       axios.get(dataFetchUrl).then(function (data) {
         _this.pagination = data.data;
         _this.tableData = data.data.data;
       }).catch(function (error) {
         return _this.tableData = [];
       });
-    },
-
-    /**
-     * Get the id number.
-     * @param key
-     * */
-    idNumber: function idNumber(key) {
-      return (this.currentPage - 1) * this.perPage + 1 + key;
     },
 
     /**
@@ -2032,6 +2014,25 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       this.fetchData();
+    },
+    searchNow: function searchNow(e) {
+      var _this2 = this;
+
+      if (typeof e.target.value === 'undefined') {
+        this.tableData = [];
+        this.pagination = [];
+        this.searchTerm = '';
+        return;
+      }
+
+      this.searchTerm = e.target.value;
+      var dataSearchFetchUrl = 'examinees/search/datatable?page=1&column=' + this.sortedColumn + '&order=' + this.order + '&search_term=' + this.searchTerm;
+      axios.get(dataSearchFetchUrl).then(function (data) {
+        _this2.pagination = data.data;
+        _this2.tableData = data.data.data;
+      }).catch(function (error) {
+        return _this2.tableData = [];
+      });
     }
   },
   filters: {
@@ -38631,7 +38632,37 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "data-table" }, [
-    _vm._m(0),
+    _c("div", { staticClass: "col-sm-8" }, [
+      _c("div", { staticClass: "panel panel-default" }, [
+        _c("div", { staticClass: "panel-heading" }, [
+          _vm._v("Please Enter for Search")
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "panel-body" }, [
+          _c("div", [
+            _c("input", {
+              staticClass: "form-control",
+              attrs: {
+                id: "searchTerm",
+                type: "text",
+                placeholder: "what are you looking for?"
+              },
+              on: {
+                keyup: function($event) {
+                  if (
+                    !$event.type.indexOf("key") &&
+                    _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                  ) {
+                    return null
+                  }
+                  return _vm.searchNow($event)
+                }
+              }
+            })
+          ])
+        ])
+      ])
+    ]),
     _vm._v(" "),
     _c("div", { staticStyle: { padding: "5px 0px 10px 0px" } }, [_vm._v(" ")]),
     _vm._v(" "),
@@ -38639,39 +38670,35 @@ var render = function() {
       _c("thead", [
         _c(
           "tr",
-          [
-            _c("th", { staticClass: "table-head" }, [_vm._v("#")]),
-            _vm._v(" "),
-            _vm._l(_vm.columns, function(column) {
-              return _c(
-                "th",
-                {
-                  key: column,
-                  staticClass: "table-head",
-                  on: {
-                    click: function($event) {
-                      return _vm.sortByColumn(column)
-                    }
+          _vm._l(_vm.columns, function(column) {
+            return _c(
+              "th",
+              {
+                key: column,
+                staticClass: "table-head",
+                on: {
+                  click: function($event) {
+                    return _vm.sortByColumn(column)
                   }
-                },
-                [
-                  _vm._v(
-                    "\n        " +
-                      _vm._s(_vm._f("columnHead")(column)) +
-                      "\n          "
-                  ),
-                  column === _vm.sortedColumn
-                    ? _c("span", [
-                        _vm.order === "asc"
-                          ? _c("i", { staticClass: "fas fa-arrow-up" })
-                          : _c("i", { staticClass: "fas fa-arrow-down" })
-                      ])
-                    : _vm._e()
-                ]
-              )
-            })
-          ],
-          2
+                }
+              },
+              [
+                _vm._v(
+                  "\n        " +
+                    _vm._s(_vm._f("columnHead")(column)) +
+                    "\n          "
+                ),
+                column === _vm.sortedColumn
+                  ? _c("span", [
+                      _vm.order === "asc"
+                        ? _c("i", { staticClass: "fas fa-arrow-up" })
+                        : _c("i", { staticClass: "fas fa-arrow-down" })
+                    ])
+                  : _vm._e()
+              ]
+            )
+          }),
+          0
         )
       ]),
       _vm._v(" "),
@@ -38693,14 +38720,10 @@ var render = function() {
                 return _c(
                   "tr",
                   { key: key1, staticClass: "m-datatable__row" },
-                  [
-                    _c("td", [_vm._v(_vm._s(_vm.idNumber(key1)))]),
-                    _vm._v(" "),
-                    _vm._l(data, function(value, key) {
-                      return _c("td", { key: key }, [_vm._v(_vm._s(value))])
-                    })
-                  ],
-                  2
+                  _vm._l(data, function(value, key) {
+                    return _c("td", { key: key }, [_vm._v(_vm._s(value))])
+                  }),
+                  0
                 )
               })
         ],
@@ -38810,29 +38833,7 @@ var render = function() {
       : _vm._e()
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-sm-8" }, [
-      _c("div", { staticClass: "panel panel-default" }, [
-        _c("div", { staticClass: "panel-heading" }, [
-          _vm._v("Please Enter for Search")
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "panel-body" }, [
-          _c("div", [
-            _c("input", {
-              staticClass: "form-control",
-              attrs: { type: "text", placeholder: "what are you looking for?" }
-            })
-          ])
-        ])
-      ])
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 

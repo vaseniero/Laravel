@@ -56,24 +56,11 @@ class HomeController extends Controller
      */
     public function getExamineesForDataTable(Request $request)
     {
-        $examinees = $this->examinee->paginate(50);
-        return ExamineeResource::collection($examinees);
-    }
-
-    /**
-     * Get search examineess for the data table.
-     *
-     * @param Request $request
-     *
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
-     */
-    public function getSearchExamineesForDataTable(Request $request)
-    {
         if (count($request->all())) {
             $column = (is_null($request->column)) ? 'name_of_examinee' : $request->column;
             $order = (is_null($request->order)) ? 'asc' : $request->order;
+            $per_page = (is_null($request->per_page)) ? 50 : $request->per_page;
             $columnOrder = $column;
-            $per_page = (is_null($request->per_page)) ? 0 : $request->per_page;
 
             switch ($column) {
                 case 'examinee':
@@ -86,13 +73,43 @@ class HomeController extends Controller
                     break;
             }
 
-            if ($per_page === 0) {
-                $examinees = $this->examinee->orderBy($columnOrder, $order);
+            $examinees = $this->examinee->orderBy($columnOrder, $order)->paginate($per_page);
+        }
+        else {
+            $examinees = $this->examinee->all();
+        }
+    
+        return ExamineeResource::collection($examinees);
+    }
+
+    /**
+     * Get search examineess for the data table.
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
+    public function getExamineesSearchForDataTable(Request $request)
+    {
+        if (count($request->all())) {
+            $searchTerm = (is_null($request->search_term)) ? '' : $request->search_term . '%';
+            $column = (is_null($request->column)) ? 'name_of_examinee' : $request->column;
+            $order = (is_null($request->order)) ? 'asc' : $request->order;
+            $per_page = (is_null($request->per_page)) ? 0 : $request->per_page;
+            $columnOrder = $column;
+
+            switch ($column) {
+                case 'examinee':
+                    $columnOrder = 'name_of_examinee';
+                    break;
+                case 'campus':
+                    $columnOrder = 'campus_eligibility';
+                    break;
+                default:
+                    break;
             }
-            else {
-                $query = $this->examinee->orderBy($columnOrder, $order);
-                $examinees = $query->paginate($per_page);
-            }
+
+            $examinees = $this->examinee::where($columnOrder, 'like', $searchTerm)->orderBy($columnOrder, $order)->paginate($per_page);
         }
         else {
             $examinees = $this->examinee->all();

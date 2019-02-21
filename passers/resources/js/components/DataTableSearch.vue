@@ -5,7 +5,7 @@
             <div class="panel-heading">Please Enter for Search</div>
             <div class="panel-body">
                 <div>
-                    <input type="text" placeholder="what are you looking for?" class="form-control">
+                    <input id="searchTerm" type="text" placeholder="what are you looking for?" @keyup.enter="searchNow($event)" class="form-control">
                 </div>
             </div>
         </div>
@@ -14,7 +14,6 @@
     <table class="table table-striped">
       <thead>
       <tr>
-        <th class="table-head">#</th>
         <th v-for="column in columns" :key="column" @click="sortByColumn(column)" class="table-head">
           {{ column | columnHead }}
             <span v-if="column === sortedColumn">
@@ -29,7 +28,6 @@
         <td class="lead text-center" :colspan="columns.length + 1">No data found.</td>
       </tr>
       <tr v-for="(data, key1) in tableData" :key="key1" class="m-datatable__row" v-else>
-        <td>{{ idNumber(key1) }}</td>
         <td v-for="(value, key) in data" :key="key">{{ value }}</td>
       </tr>
       </tbody>
@@ -69,7 +67,8 @@ export default {
       currentPage: 1,
       perPage: 50,
       sortedColumn: this.columns[0],
-      order: 'asc'
+      order: 'asc',
+      searchTerm: ''
     }
   },
   watch: {
@@ -96,7 +95,7 @@ export default {
         from = 1
       }
       let to = from + (this.offset * 2)
-      if (to >= this.pagination.last_page) {
+      if (to >= this.pagination.meta.last_page) {
         to = this.pagination.meta.last_page
       }
       let pagesArray = []
@@ -114,32 +113,20 @@ export default {
   },
   methods: {
     fetchData() {
-      if (typeof this.currentPage === 'undefined') {
-          this.currentPage = 1;
+      let dataFetchUrl = '';
+
+      if (this.searchTerm == '') {
+        dataFetchUrl = 'examinees/datatable?page='+this.currentPage+'&column='+this.sortedColumn+'&order='+this.order+'&per_page='+this.perPage;
       }
-      if (typeof this.sortedColumn === 'undefined') {
-          this.sortedColumn = 'name_of_examinee';
+      else {
+        dataFetchUrl = 'examinees/search/datatable?page='+this.currentPage+'&column='+this.sortedColumn+'&order='+this.order+'&per_page='+this.perPage+'&search_term='+this.searchTerm;
       }
-      if (typeof this.order === 'undefined') {
-          this.order = 'asc';
-      }
-      if (typeof this.perPage === 'undefined') {
-          this.perPage = 50;
-      }
-  
-      let dataFetchUrl = 'examinees/search/data-table?page='+this.currentPage+'&column='+this.sortedColumn+'&order='+this.order+'&per_page='+this.perPage;
+
       axios.get(dataFetchUrl)
         .then(data => {
-          this.pagination = data.data
-          this.tableData = data.data.data
+          this.pagination = data.data;
+          this.tableData = data.data.data;
         }).catch(error => this.tableData = [])
-    },
-    /**
-     * Get the id number.
-     * @param key
-     * */
-    idNumber(key) {
-      return (this.currentPage - 1) * this.perPage + 1 + key
     },
     /**
      * Change the page.
@@ -147,7 +134,7 @@ export default {
      */
     changePage(pageNumber) {
       this.currentPage = pageNumber
-      this.fetchData()
+      this.fetchData();
     },
     /**
      * Sort the data by column.
@@ -160,6 +147,24 @@ export default {
         this.order = 'asc'
       }
       this.fetchData()
+    },
+    searchNow(e) {
+      if (typeof e.target.value === 'undefined') {
+          this.tableData = [];
+          this.pagination = [];
+          this.searchTerm = '';
+          return;
+      }
+
+      this.searchTerm = e.target.value;
+
+      let dataSearchFetchUrl = 'examinees/search/datatable?page=1&column='+this.sortedColumn+'&order='+this.order+'&search_term='+this.searchTerm;
+      
+      axios.get(dataSearchFetchUrl)
+        .then(data => {
+          this.pagination = data.data;
+          this.tableData = data.data.data;
+        }).catch(error => this.tableData = [])
     }
   },
   filters: {

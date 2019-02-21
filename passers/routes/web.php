@@ -28,6 +28,6 @@ Route::get('/passers', function() {
 
 Route::get('examinees', 'HomeController@getExaminees')->name('examinees');
 
-$this->get('examinees/data-table', 'HomeController@getExamineesForDataTable')->name('examinees.table');
+$this->get('examinees/datatable', 'HomeController@getExamineesForDataTable')->name('examinees.table');
 
-$this->get('examinees/search/data-table', 'HomeController@getSearchExamineesForDataTable')->name('examinees.search.table');
+$this->get('examinees/search/datatable', 'HomeController@getExamineesSearchForDataTable')->name('examinees.search.table');
