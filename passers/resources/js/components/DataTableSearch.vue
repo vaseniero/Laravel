@@ -14,6 +14,7 @@
     <table class="table table-striped">
       <thead>
       <tr>
+        <th class="table-head">#</th>
         <th v-for="column in columns" :key="column" @click="sortByColumn(column)" class="table-head">
           {{ column | columnHead }}
             <span v-if="column === sortedColumn">
@@ -68,6 +69,7 @@ export default {
       perPage: 50,
       sortedColumn: this.columns[0],
       order: 'asc',
+      searchColumn: '',
       searchTerm: ''
     }
   },
@@ -119,8 +121,10 @@ export default {
         dataFetchUrl = 'examinees/datatable?page='+this.currentPage+'&column='+this.sortedColumn+'&order='+this.order+'&per_page='+this.perPage;
       }
       else {
-        dataFetchUrl = 'examinees/search/datatable?page='+this.currentPage+'&column='+this.sortedColumn+'&order='+this.order+'&per_page='+this.perPage+'&search_term='+this.searchTerm;
+        dataFetchUrl = 'examinees/search/datatable?page='+this.currentPage+'&column='+this.sortedColumn+'&order='+this.order+'&per_page='+this.perPage+'&search_column='+this.searchColumn+'&search_term='+this.searchTerm;
       }
+
+      alert('URL: ' + dataFetchUrl);
 
       axios.get(dataFetchUrl)
         .then(data => {
@@ -152,13 +156,16 @@ export default {
       if (typeof e.target.value === 'undefined') {
           this.tableData = [];
           this.pagination = [];
+          this.searchColumn = '';
           this.searchTerm = '';
           return;
       }
 
+      this.currentPage = 1;
       this.searchTerm = e.target.value;
+      this.searchColumn = this.sortedColumn;      
 
-      let dataFetchUrl = 'examinees/search/datatable?page=1&column='+this.sortedColumn+'&order='+this.order+'&per_page='+this.perPage+'&search_term='+this.searchTerm;
+      let dataFetchUrl = 'examinees/search/datatable?page=1&column='+this.sortedColumn+'&order='+this.order+'&per_page='+this.perPage+'&search_column='+this.searchColumn+'&search_term='+this.searchTerm;
 
       axios.get(dataFetchUrl)
         .then(data => {

@@ -1896,6 +1896,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     fetchUrl: {
@@ -1922,6 +1923,7 @@ __webpack_require__.r(__webpack_exports__);
       perPage: 50,
       sortedColumn: this.columns[0],
       order: 'asc',
+      searchColumn: '',
       searchTerm: ''
     };
   },
@@ -1982,9 +1984,10 @@ __webpack_require__.r(__webpack_exports__);
       if (this.searchTerm === '') {
         dataFetchUrl = 'examinees/datatable?page=' + this.currentPage + '&column=' + this.sortedColumn + '&order=' + this.order + '&per_page=' + this.perPage;
       } else {
-        dataFetchUrl = 'examinees/search/datatable?page=' + this.currentPage + '&column=' + this.sortedColumn + '&order=' + this.order + '&per_page=' + this.perPage + '&search_term=' + this.searchTerm;
+        dataFetchUrl = 'examinees/search/datatable?page=' + this.currentPage + '&column=' + this.sortedColumn + '&order=' + this.order + '&per_page=' + this.perPage + '&search_column=' + this.searchColumn + '&search_term=' + this.searchTerm;
       }
 
+      alert('URL: ' + dataFetchUrl);
       axios.get(dataFetchUrl).then(function (data) {
         _this.pagination = data.data;
         _this.tableData = data.data.data;
@@ -2021,12 +2024,15 @@ __webpack_require__.r(__webpack_exports__);
       if (typeof e.target.value === 'undefined') {
         this.tableData = [];
         this.pagination = [];
+        this.searchColumn = '';
         this.searchTerm = '';
         return;
       }
 
+      this.currentPage = 1;
       this.searchTerm = e.target.value;
-      var dataFetchUrl = 'examinees/search/datatable?page=1&column=' + this.sortedColumn + '&order=' + this.order + '&per_page=' + this.perPage + '&search_term=' + this.searchTerm;
+      this.searchColumn = this.sortedColumn;
+      var dataFetchUrl = 'examinees/search/datatable?page=1&column=' + this.sortedColumn + '&order=' + this.order + '&per_page=' + this.perPage + '&search_column=' + this.searchColumn + '&search_term=' + this.searchTerm;
       axios.get(dataFetchUrl).then(function (data) {
         _this2.pagination = data.data;
         _this2.tableData = data.data.data;
@@ -38670,35 +38676,39 @@ var render = function() {
       _c("thead", [
         _c(
           "tr",
-          _vm._l(_vm.columns, function(column) {
-            return _c(
-              "th",
-              {
-                key: column,
-                staticClass: "table-head",
-                on: {
-                  click: function($event) {
-                    return _vm.sortByColumn(column)
+          [
+            _c("th", { staticClass: "table-head" }, [_vm._v("#")]),
+            _vm._v(" "),
+            _vm._l(_vm.columns, function(column) {
+              return _c(
+                "th",
+                {
+                  key: column,
+                  staticClass: "table-head",
+                  on: {
+                    click: function($event) {
+                      return _vm.sortByColumn(column)
+                    }
                   }
-                }
-              },
-              [
-                _vm._v(
-                  "\n        " +
-                    _vm._s(_vm._f("columnHead")(column)) +
-                    "\n          "
-                ),
-                column === _vm.sortedColumn
-                  ? _c("span", [
-                      _vm.order === "asc"
-                        ? _c("i", { staticClass: "fas fa-arrow-up" })
-                        : _c("i", { staticClass: "fas fa-arrow-down" })
-                    ])
-                  : _vm._e()
-              ]
-            )
-          }),
-          0
+                },
+                [
+                  _vm._v(
+                    "\n        " +
+                      _vm._s(_vm._f("columnHead")(column)) +
+                      "\n          "
+                  ),
+                  column === _vm.sortedColumn
+                    ? _c("span", [
+                        _vm.order === "asc"
+                          ? _c("i", { staticClass: "fas fa-arrow-up" })
+                          : _c("i", { staticClass: "fas fa-arrow-down" })
+                      ])
+                    : _vm._e()
+                ]
+              )
+            })
+          ],
+          2
         )
       ]),
       _vm._v(" "),

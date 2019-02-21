@@ -92,11 +92,13 @@ class HomeController extends Controller
     public function getExamineesSearchForDataTable(Request $request)
     {
         if (count($request->all())) {
+            $searchColumn = (is_null($request->search_column)) ? 'name_of_examinee' : $request->search_column;
             $searchTerm = (is_null($request->search_term)) ? '' : $request->search_term . '%';
             $column = (is_null($request->column)) ? 'name_of_examinee' : $request->column;
             $order = (is_null($request->order)) ? 'asc' : $request->order;
-            $per_page = (is_null($request->per_page)) ? 0 : $request->per_page;
+            $per_page = (is_null($request->per_page)) ? 50 : $request->per_page;
             $columnOrder = $column;
+            $columnSearch = $searchColumn;
 
             switch ($column) {
                 case 'examinee':
@@ -109,7 +111,18 @@ class HomeController extends Controller
                     break;
             }
 
-            $examinees = $this->examinee::where($columnOrder, 'like', $searchTerm)->orderBy($columnOrder, $order)->paginate($per_page);
+            switch ($searchColumn) {
+                case 'examinee':
+                    $columnSearch = 'name_of_examinee';
+                    break;
+                case 'campus':
+                    $columnSearch = 'campus_eligibility';
+                    break;
+                default:
+                    break;
+            }
+
+            $examinees = $this->examinee::where($columnSearch, 'like', $searchTerm)->orderBy($columnOrder, $order)->paginate($per_page);
         }
         else {
             $examinees = $this->examinee->all();
