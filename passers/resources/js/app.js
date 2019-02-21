@@ -30,6 +30,49 @@ Vue.component('pagination', require('laravel-vue-pagination'));
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+import DataTable from './components/DataTable';
+Vue.component('data-table',DataTable);
+
+import DataTableSearch from './components/DataTableSearch';
+Vue.component('data-table-search',DataTableSearch);
+
+import VuePagination from './components/Pagination.vue';
+Vue.component('vue-pagination',VuePagination);
+
+import axios from 'axios';
+axios.defaults.headers.common = {
+    'X-Requested-With': 'XMLHttpRequest',
+    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+};
+
 const app = new Vue({
-    el: '#app'
+    el: '#app',
+    data: {
+        examinees: {
+            total: 0,
+            per_page: 2,
+            from: 1,
+            to: 0,
+            current_page: 1
+        },
+        offset: 4,
+    },
+    mounted() {
+        this.getExaminees();
+    },
+    component: {
+        DataTable,
+        VuePagination,
+    },
+    methods: {
+        getExaminees() {
+            axios.get('examinees?page=${this.examinees.current_page}')
+                .then((response) => {
+                    this.examinees = response.data;
+                })
+                .catch(() => {
+                    console.log('handle server error from here');
+                });
+        }
+    }
 });

@@ -20,4 +20,12 @@ class Examinee extends Model
      */
     public $timestamps = true;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'name_of_examinee', 'school', 'division'
+    ];
 }
