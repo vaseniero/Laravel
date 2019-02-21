@@ -13,8 +13,9 @@
                             {{ session('status') }}
                         </div>
                     @endif
-                    <h3>2018 PSHS NCE Passers</h3>
-                    Click <a href="{{ url('/school') }}">here</a> for List of School Passers
+
+                    <h3>List of Schools and Number of Passers</h3>
+                    Click <a href="{{ url('/home') }}">here</a> for Home
                 </div>
             </div>
         </div>
@@ -22,9 +23,11 @@
 </div>
 <div id="app" style="padding-top:25px;">
 	<div class="container">
-		<data-table-search
-			fetch-url="{{ route('examinees.table') }}"
-			:columns="['examinee', 'campus', 'school' , 'division']"></data-table-search>
-	</div>
+        {{-- <example-component></example-component> --}}
+
+		<data-table-school
+			fetch-url="{{ route('schools.table') }}"
+            :columns="['school', 'passers']"></data-table-school>
+    </div>
 </div>
 @endsection

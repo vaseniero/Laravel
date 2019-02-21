@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Examinee;
 use App\Http\Resources\ExamineeResource;
+use App\Http\Resources\SchoolResource;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
@@ -37,6 +38,16 @@ class HomeController extends Controller
     }
 
     /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function school()
+    {
+        return view('school');
+    }
+
+    /**
      * Get Examinees.
      *
      * @return \Illuminate\Http\Response
@@ -45,6 +56,62 @@ class HomeController extends Controller
     {
         $examinees = $this->examinee->paginate(50);
         return response()->json($examinees);
+    }
+
+    /**
+     * Get School.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getSchoolPassers()
+    {
+        $school = DB::table('examinee')
+                        ->select('school', DB::raw("Count('name_of_examinee') as passers"))
+                        ->orderBy('school')
+                        ->groupBy(DB::raw("school"))
+                        ->paginate(50);
+        return response()->json($school);
+    }
+
+    /**
+     * Get schools for the data table.
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
+    public function getSchoolsForDataTable(Request $request)
+    {
+        if (count($request->all())) {
+            $column = (is_null($request->column)) ? 'school' : $request->column;
+            $order = (is_null($request->order)) ? 'asc' : $request->order;
+            $per_page = (is_null($request->per_page)) ? 50 : $request->per_page;
+
+            if ($column == 'passers') {
+                $school = DB::table('examinee')
+                ->select('school', DB::raw("Count('name_of_examinee') as passers"))
+                ->orderBy($column, $order)
+                ->orderBy('school', 'asc')
+                ->groupBy(DB::raw("school"))
+                ->paginate($per_page);
+            }
+            else {
+                $school = DB::table('examinee')
+                ->select('school', DB::raw("Count('name_of_examinee') as passers"))
+                ->orderBy($column, $order)
+                ->groupBy(DB::raw("school"))
+                ->paginate($per_page);
+            }
+        }
+        else {
+            $school = DB::table('examinee')
+            ->select('school', DB::raw("Count('name_of_examinee') as passers"))
+            ->orderBy('school')
+            ->groupBy(DB::raw("school"))
+            ->paginate(50);
+        }
+    
+        return SchoolResource::collection($school);
     }
 
     /**
@@ -129,5 +196,15 @@ class HomeController extends Controller
         }
     
         return ExamineeResource::collection($examinees);
+    }
+
+    public function examineeAdd(Request $request) {
+        $data = new Examinee();
+        $data->name_of_examinee = $request->examinee;
+        $data->campus_eligibility = $request->campus;
+        $data->school = $request->school;
+        $data->division = $request->division;
+        $data->save ();
+        return $data;
     }
 }

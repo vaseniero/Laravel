@@ -18,6 +18,7 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/school', 'HomeController@school')->name('school');
 
 Route::get('/passers', function() {
     $crawler = Goutte::request('GET', 'http://www.pshs.edu.ph/nce2018/');
@@ -26,8 +27,12 @@ Route::get('/passers', function() {
     });
 });
 
+Route::post ('/examinee/add', 'HomeController@examineeAdd' );
+
 Route::get('examinees', 'HomeController@getExaminees')->name('examinees');
+Route::get('school/passers', 'HomeController@getSchoolPassers')->name('school.passers');
 
 $this->get('examinees/datatable', 'HomeController@getExamineesForDataTable')->name('examinees.table');
-
 $this->get('examinees/search/datatable', 'HomeController@getExamineesSearchForDataTable')->name('examinees.search.table');
+
+$this->get('schools/datatable', 'HomeController@getSchoolsForDataTable')->name('schools.table');

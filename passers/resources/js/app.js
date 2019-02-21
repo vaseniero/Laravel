@@ -36,6 +36,9 @@ Vue.component('data-table',DataTable);
 import DataTableSearch from './components/DataTableSearch';
 Vue.component('data-table-search',DataTableSearch);
 
+import DataTableSchool from './components/DataTableSchool';
+Vue.component('data-table-school',DataTableSchool);
+
 import VuePagination from './components/Pagination.vue';
 Vue.component('vue-pagination',VuePagination);
 
@@ -46,33 +49,5 @@ axios.defaults.headers.common = {
 };
 
 const app = new Vue({
-    el: '#app',
-    data: {
-        examinees: {
-            total: 0,
-            per_page: 2,
-            from: 1,
-            to: 0,
-            current_page: 1
-        },
-        offset: 4,
-    },
-    mounted() {
-        this.getExaminees();
-    },
-    component: {
-        DataTable,
-        VuePagination,
-    },
-    methods: {
-        getExaminees() {
-            axios.get('examinees?page=${this.examinees.current_page}')
-                .then((response) => {
-                    this.examinees = response.data;
-                })
-                .catch(() => {
-                    console.log('handle server error from here');
-                });
-        }
-    }
+    el: '#app'
 });
