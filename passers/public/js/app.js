@@ -2026,8 +2026,8 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       this.searchTerm = e.target.value;
-      var dataSearchFetchUrl = 'examinees/search/datatable?page=1&column=' + this.sortedColumn + '&order=' + this.order + '&search_term=' + this.searchTerm;
-      axios.get(dataSearchFetchUrl).then(function (data) {
+      var dataFetchUrl = 'examinees/search/datatable?page=1&column=' + this.sortedColumn + '&order=' + this.order + '&per_page=' + this.perPage + '&search_term=' + this.searchTerm;
+      axios.get(dataFetchUrl).then(function (data) {
         _this2.pagination = data.data;
         _this2.tableData = data.data.data;
       }).catch(function (error) {
