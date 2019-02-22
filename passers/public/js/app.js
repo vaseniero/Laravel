@@ -2168,7 +2168,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     fetchData: function fetchData() {
-      var _this = this;
+      var _this2 = this;
 
       var dataFetchUrl = '';
 
@@ -2179,10 +2179,10 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       axios.get(dataFetchUrl).then(function (data) {
-        _this.pagination = data.data;
-        _this.tableData = data.data.data;
+        _this2.pagination = data.data;
+        _this2.tableData = data.data.data;
       }).catch(function (error) {
-        return _this.tableData = [];
+        return _this2.tableData = [];
       });
     },
 
@@ -2220,48 +2220,44 @@ __webpack_require__.r(__webpack_exports__);
       this.searchExaminees(e.target.value);
     },
     searchExaminees: function searchExaminees(searchTerm) {
-      var _this2 = this;
+      var _this3 = this;
 
       this.currentPage = 1;
       this.searchTerm = searchTerm;
       this.searchColumn = this.sortedColumn;
       var dataFetchUrl = 'examinees/search/datatable?page=1&column=' + this.sortedColumn + '&order=' + this.order + '&per_page=' + this.perPage + '&search_column=' + this.searchColumn + '&search_term=' + this.searchTerm;
       axios.get(dataFetchUrl).then(function (data) {
-        _this2.pagination = data.data;
-        _this2.tableData = data.data.data;
+        _this3.pagination = data.data;
+        _this3.tableData = data.data.data;
       }).catch(function (error) {
-        return _this2.tableData = [];
+        return _this3.tableData = [];
       });
     },
     examineeNewbie: function examineeNewbie() {
+      var _this = this;
+
       var input = this.newExaminee;
 
       if (input['examinee'] == '' || input['campus'] == '' || input['school'] == '' || input['division'] == '') {
         this.hasError = false;
       } else {
         this.hasError = true;
-        var blnSuccess = false;
-        var retNewbie = '';
         axios.post('/examinee/newbie', input).then(function (response) {
+          var newbie = response.data.name_of_examinee;
+          var fullName = newbie.split(' ');
+          _this.newExaminee = {
+            'examinee': '',
+            'campus': '',
+            'school': '',
+            'division': ''
+          };
+
+          _this.searchExaminees(fullName[0]);
+
           console.log(response);
-          blnSuccess = true;
         }).catch(function (error) {
           console.log(error);
         });
-
-        if (blnSuccess) {
-          this.hasError = false;
-          this.newExaminee = {
-            'examinee': ''
-          };
-          this.newExaminee.examinee = '';
-          this.newExaminee.campus = '';
-          this.newExaminee.school = '';
-          this.newExaminee.division = '';
-          retNewbie = response.name_of_examinee;
-          this.searchExaminees(retNewbie);
-          alert('triggered ' + retNewbie);
-        }
       }
     }
   },

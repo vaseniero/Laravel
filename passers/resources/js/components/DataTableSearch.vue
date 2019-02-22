@@ -197,6 +197,7 @@
           }).catch(error => this.tableData = [])
       },
       examineeNewbie: function examineeNewbie() {
+          var _this = this;
           var input = this.newExaminee;
           
           if (input['examinee'] == '' || input['campus'] == '' || input['school'] == '' || input['division'] == '' ) {
@@ -204,29 +205,18 @@
           } 
           else {
               this.hasError = true;
-              var blnSuccess = false;
-              var retNewbie = '';
 
               axios.post('/examinee/newbie', input)
                 .then(function (response) {
+                    var newbie = response.data.name_of_examinee;
+                    var fullName = newbie.split(' ');
+                    _this.newExaminee = { 'examinee': '', 'campus': '', 'school': '', 'division': '' };
+                    _this.searchExaminees(fullName[0]);
                     console.log(response);
-                    blnSuccess = true;
                 })
                 .catch(function (error) {
                     console.log(error);
-                });
-              
-              if (blnSuccess) {
-                  this.hasError = false;
-                  this.newExaminee = { 'examinee': '' };
-                  this.newExaminee.examinee = '';
-                  this.newExaminee.campus = '';
-                  this.newExaminee.school = '';
-                  this.newExaminee.division = '';
-                  retNewbie = response.name_of_examinee;
-                  this.searchExaminees(retNewbie);
-                  alert('triggered ' + retNewbie);
-              }
+                });             
           }
       }    
     },
