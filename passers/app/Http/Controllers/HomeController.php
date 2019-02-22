@@ -66,7 +66,7 @@ class HomeController extends Controller
     public function getSchoolPassers()
     {
         $school = DB::table('examinee')
-                        ->select('school', DB::raw("Count('name_of_examinee') as passers"))
+                        ->select('school', DB::raw("count('name_of_examinee') as passers"))
                         ->orderBy('school')
                         ->groupBy(DB::raw("school"))
                         ->paginate(50);
@@ -124,7 +124,7 @@ class HomeController extends Controller
     public function getExamineesForDataTable(Request $request)
     {
         if (count($request->all())) {
-            $column = (is_null($request->column)) ? 'name_of_examinee' : $request->column;
+            $column = (is_null($request->column)) ? 'id' : $request->column;
             $order = (is_null($request->order)) ? 'asc' : $request->order;
             $per_page = (is_null($request->per_page)) ? 50 : $request->per_page;
             $columnOrder = $column;
@@ -153,7 +153,7 @@ class HomeController extends Controller
             }
         }
         else {
-            $examinees = $this->examinee->all();
+            $examinees = $this->examinee->orderBy('id')->all();
         }
     
         return ExamineeResource::collection($examinees);
@@ -169,7 +169,7 @@ class HomeController extends Controller
     public function getExamineesSearchForDataTable(Request $request)
     {
         if (count($request->all())) {
-            $searchColumn = (is_null($request->search_column)) ? 'name_of_examinee' : $request->search_column;
+            $searchColumn = (is_null($request->search_column)) ? 'id' : $request->search_column;
             $searchTerm = (is_null($request->search_term)) ? '' : $request->search_term . '%';
             $column = (is_null($request->column)) ? 'name_of_examinee' : $request->column;
             $order = (is_null($request->order)) ? 'asc' : $request->order;
@@ -212,19 +212,20 @@ class HomeController extends Controller
             }
         }
         else {
-            $examinees = $this->examinee->all();
+            $examinees = $this->examinee->orderBy('id')->all();
         }
     
         return ExamineeResource::collection($examinees);
     }
 
-    public function examineeAdd(Request $request) {
-        $data = new Examinee();
-        $data->name_of_examinee = $request->examinee;
-        $data->campus_eligibility = $request->campus;
-        $data->school = $request->school;
-        $data->division = $request->division;
-        $data->save ();
-        return $data;
+    public function examineeNewbie(Request $request) {
+        $post = new Examinee();
+        $post->name_of_examinee = $request->get('examinee');
+        $post->campus_eligibility = $request->get('campus');
+        $post->school = $request->get('school');
+        $post->division = $request->get('division');
+        $post->save();
+
+        return response()->json($post);
     }
 }

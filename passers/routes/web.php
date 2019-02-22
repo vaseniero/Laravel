@@ -27,7 +27,7 @@ Route::get('/passers', function() {
     });
 });
 
-Route::post ('/examinee/add', 'HomeController@examineeAdd' );
+Route::post ('/examinee/newbie', 'HomeController@examineeNewbie' );
 
 Route::get('examinees', 'HomeController@getExaminees')->name('examinees');
 Route::get('school/passers', 'HomeController@getSchoolPassers')->name('school.passers');

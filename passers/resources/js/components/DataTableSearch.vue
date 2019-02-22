@@ -72,7 +72,7 @@
             <label for="division">Division:</label>
             <input type="text" class="form-control" id="division" name="division" required v-model="newExaminee.division" placeholder=" Enter school division">
         </div>
-        <button class="btn btn-primary" @click.prevent="createExaminee()" id="btnAdd" name="btnAdd">
+        <button class="btn btn-primary" @click.prevent="examineeNewbie()" id="btnAdd" name="btnAdd">
         <span class="glyphicon glyphicon-plus"></span> ADD
         </button>      
       </div>
@@ -81,151 +81,162 @@
 </template>
 
 <script type="text/ecmascript-6">
-export default {
-  props: {
-    columns: { type: Array, required: true },
-  },
-  data() {
-    return {
-      tableData: [],
-      pagination: {
-        meta: { to: 1, from: 1 }
-      },
-      offset: 4,
-      currentPage: 1,
-      perPage: 50,
-      sortedColumn: this.columns[0],
-      order: 'asc',
-      searchColumn: '',
-      searchTerm: '',
-      items: [],
-      hasErrors: true,
-      newExaminee: { 'examinee': '', 'campus': '', 'school': '', 'division': ''}
-    }
-  },
-  created() {
-    return this.fetchData()
-  },
-  computed: {
-    /**
-     * Get the pages number array for displaying in the pagination.
-     * */
-    pagesNumber() {
-      if (!this.pagination.meta.to) {
-        return []
-      }
-      let from = this.pagination.meta.current_page - this.offset
-      if (from < 1) {
-        from = 1
-      }
-      let to = from + (this.offset * 2)
-      if (to >= this.pagination.meta.last_page) {
-        to = this.pagination.meta.last_page
-      }
-      let pagesArray = []
-      for (let page = from; page <= to; page++) {
-        pagesArray.push(page)
-      }
-      return pagesArray
+  export default {
+    props: {
+      columns: { type: Array, required: true },
     },
-    /**
-     * Get the total data displayed in the current page.
-     * */
-    totalData() {
-      return (this.pagination.meta.to - this.pagination.meta.from) + 1
-    }
-  },
-  methods: {
-    fetchData() {
-      let dataFetchUrl = '';
-
-      if (this.searchTerm === '') {
-        dataFetchUrl = 'examinees/datatable?page='+this.currentPage+'&column='+this.sortedColumn+'&order='+this.order+'&per_page='+this.perPage;
+    data() {
+      return {
+        tableData: [],
+        pagination: {
+          meta: { to: 1, from: 1 }
+        },
+        offset: 4,
+        currentPage: 1,
+        perPage: 50,
+        sortedColumn: this.columns[0],
+        order: 'asc',
+        searchColumn: '',
+        searchTerm: '',
+        items: [],
+        hasErrors: true,
+        newExaminee: { 'examinee': '', 'campus': '', 'school': '', 'division': ''},
       }
-      else {
-        dataFetchUrl = 'examinees/search/datatable?page='+this.currentPage+'&column='+this.sortedColumn+'&order='+this.order+'&per_page='+this.perPage+'&search_column='+this.searchColumn+'&search_term='+this.searchTerm;
-      }
-
-      axios.get(dataFetchUrl)
-        .then(data => {
-          this.pagination = data.data;
-          this.tableData = data.data.data;
-        }).catch(error => this.tableData = [])
     },
-    /**
-     * Change the page.
-     * @param pageNumber
-     */
-    changePage(pageNumber) {
-      this.currentPage = pageNumber
-      this.fetchData();
+    created() {
+      return this.fetchData()
     },
-    /**
-     * Sort the data by column.
-     * */
-    sortByColumn(column) {
-      if (column === this.sortedColumn) {
-        this.order = (this.order === 'asc') ? 'desc' : 'asc'
-      } else {
-        this.sortedColumn = column
-        this.order = 'asc'
-      }
-      this.fetchData()
-    },
-    searchNow(e) {
-      if (typeof e.target.value === 'undefined') {
-          this.tableData = [];
-          this.pagination = [];
-          this.searchColumn = '';
-          this.searchTerm = '';
-          return;
-      }
-
-      this.searchExaminees(e.target.value);
-    },
-    searchExaminees(searchTerm) {
-      this.currentPage = 1;
-      this.searchTerm = searchTerm;
-      this.searchColumn = this.sortedColumn;      
-
-      let dataFetchUrl = 'examinees/search/datatable?page=1&column='+this.sortedColumn+'&order='+this.order+'&per_page='+this.perPage+'&search_column='+this.searchColumn+'&search_term='+this.searchTerm;
-
-      axios.get(dataFetchUrl)
-        .then(data => {
-          this.pagination = data.data;
-          this.tableData = data.data.data;
-        }).catch(error => this.tableData = [])
-    },
-    createExaminee: function createExaminee() {
-        var _this = this;
-        var input = this.newExaminee;
-        
-        if (input['examinee'] == '' || input['campus'] == '' || input['school'] == '' || input['division'] == '' ) {
-            this.hasError = false;
-        } 
-        else {
-            this.hasError = true;
-            axios.post('/examinee/add', input).then(function (response) {
-                _this.newExaminee = { 'examinee': '' };
-                _this.getExamineeAdd();
-            });
+    computed: {
+      /**
+       * Get the pages number array for displaying in the pagination.
+       * */
+      pagesNumber() {
+        if (!this.pagination.meta.to) {
+          return []
         }
+        let from = this.pagination.meta.current_page - this.offset
+        if (from < 1) {
+          from = 1
+        }
+        let to = from + (this.offset * 2)
+        if (to >= this.pagination.meta.last_page) {
+          to = this.pagination.meta.last_page
+        }
+        let pagesArray = []
+        for (let page = from; page <= to; page++) {
+          pagesArray.push(page)
+        }
+        return pagesArray
+      },
+      /**
+       * Get the total data displayed in the current page.
+       * */
+      totalData() {
+        return (this.pagination.meta.to - this.pagination.meta.from) + 1
+      }
     },
-    getExamineeItems: function getExamineeItems() {
-      var _this = this;
-    
-      axios.get('/examinee/items').then(function (response) {
-        _this.examinees = response.data;
-      });
-    }
-  },
-  filters: {
-    columnHead(value) {
-      return value.split('_').join(' ').toUpperCase()
-    }
-  },
-  name: 'DataTable'
-}
+    methods: {
+      fetchData() {
+        let dataFetchUrl = '';
+
+        if (this.searchTerm === '') {
+          dataFetchUrl = 'examinees/datatable?page='+this.currentPage+'&column='+this.sortedColumn+'&order='+this.order+'&per_page='+this.perPage;
+        }
+        else {
+          dataFetchUrl = 'examinees/search/datatable?page='+this.currentPage+'&column='+this.sortedColumn+'&order='+this.order+'&per_page='+this.perPage+'&search_column='+this.searchColumn+'&search_term='+this.searchTerm;
+        }
+
+        axios.get(dataFetchUrl)
+          .then(data => {
+            this.pagination = data.data;
+            this.tableData = data.data.data;
+          }).catch(error => this.tableData = [])
+      },
+      /**
+       * Change the page.
+       * @param pageNumber
+       */
+      changePage(pageNumber) {
+        this.currentPage = pageNumber
+        this.fetchData();
+      },
+      /**
+       * Sort the data by column.
+       * */
+      sortByColumn(column) {
+        if (column === this.sortedColumn) {
+          this.order = (this.order === 'asc') ? 'desc' : 'asc'
+        } else {
+          this.sortedColumn = column
+          this.order = 'asc'
+        }
+        this.fetchData()
+      },
+      searchNow(e) {
+        if (typeof e.target.value === 'undefined') {
+            this.tableData = [];
+            this.pagination = [];
+            this.searchColumn = '';
+            this.searchTerm = '';
+            return;
+        }
+
+        this.searchExaminees(e.target.value);
+      },
+      searchExaminees(searchTerm) {
+        this.currentPage = 1;
+        this.searchTerm = searchTerm;
+        this.searchColumn = this.sortedColumn;      
+
+        let dataFetchUrl = 'examinees/search/datatable?page=1&column='+this.sortedColumn+'&order='+this.order+'&per_page='+this.perPage+'&search_column='+this.searchColumn+'&search_term='+this.searchTerm;
+
+        axios.get(dataFetchUrl)
+          .then(data => {
+            this.pagination = data.data;
+            this.tableData = data.data.data;
+          }).catch(error => this.tableData = [])
+      },
+      examineeNewbie: function examineeNewbie() {
+          var input = this.newExaminee;
+          
+          if (input['examinee'] == '' || input['campus'] == '' || input['school'] == '' || input['division'] == '' ) {
+              this.hasError = false;
+          } 
+          else {
+              this.hasError = true;
+              var blnSuccess = false;
+              var retNewbie = '';
+
+              axios.post('/examinee/newbie', input)
+                .then(function (response) {
+                    console.log(response);
+                    blnSuccess = true;
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+              
+              if (blnSuccess) {
+                  this.hasError = false;
+                  this.newExaminee = { 'examinee': '' };
+                  this.newExaminee.examinee = '';
+                  this.newExaminee.campus = '';
+                  this.newExaminee.school = '';
+                  this.newExaminee.division = '';
+                  retNewbie = response.name_of_examinee;
+                  this.searchExaminees(retNewbie);
+                  alert('triggered ' + retNewbie);
+              }
+          }
+      }    
+    },
+    filters: {
+      columnHead(value) {
+        return value.split('_').join(' ').toUpperCase()
+      }
+    },
+    name: 'DataTable'
+  }
 </script>
 
 <style scoped>
