@@ -124,7 +124,7 @@ class HomeController extends Controller
     public function getExamineesForDataTable(Request $request)
     {
         if (count($request->all())) {
-            $column = (is_null($request->column)) ? 'id' : $request->column;
+            $column = (is_null($request->column)) ? 'name_of_examinee' : $request->column;
             $order = (is_null($request->order)) ? 'asc' : $request->order;
             $per_page = (is_null($request->per_page)) ? 50 : $request->per_page;
             $columnOrder = $column;
@@ -153,7 +153,7 @@ class HomeController extends Controller
             }
         }
         else {
-            $examinees = $this->examinee->orderBy('id')->all();
+            $examinees = $this->examinee->orderBy('name_of_examinee')->all();
         }
     
         return ExamineeResource::collection($examinees);
@@ -169,7 +169,7 @@ class HomeController extends Controller
     public function getExamineesSearchForDataTable(Request $request)
     {
         if (count($request->all())) {
-            $searchColumn = (is_null($request->search_column)) ? 'id' : $request->search_column;
+            $searchColumn = (is_null($request->search_column)) ? 'name_of_examinee' : $request->search_column;
             $searchTerm = (is_null($request->search_term)) ? '' : $request->search_term . '%';
             $column = (is_null($request->column)) ? 'name_of_examinee' : $request->column;
             $order = (is_null($request->order)) ? 'asc' : $request->order;
@@ -212,7 +212,7 @@ class HomeController extends Controller
             }
         }
         else {
-            $examinees = $this->examinee->orderBy('id')->all();
+            $examinees = $this->examinee->orderBy('name_of_examinee')->all();
         }
     
         return ExamineeResource::collection($examinees);
