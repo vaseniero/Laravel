@@ -83,13 +83,11 @@
 <script type="text/ecmascript-6">
 export default {
   props: {
-    fetchUrl: { type: String, required: true },
     columns: { type: Array, required: true },
   },
   data() {
     return {
       tableData: [],
-      url: '',
       pagination: {
         meta: { to: 1, from: 1 }
       },
@@ -103,14 +101,6 @@ export default {
       items: [],
       hasErrors: true,
       newExaminee: { 'examinee': '', 'campus': '', 'school': '', 'division': ''}
-    }
-  },
-  watch: {
-    fetchUrl: {
-      handler: function(fetchUrl) {
-        this.url = fetchUrl
-      },
-      immediate: true
     }
   },
   created() {

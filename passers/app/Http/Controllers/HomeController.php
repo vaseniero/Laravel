@@ -89,26 +89,26 @@ class HomeController extends Controller
 
             if ($column == 'passers') {
                 $school = DB::table('examinee')
-                ->select('school', DB::raw("Count('name_of_examinee') as passers"))
-                ->orderBy($column, $order)
-                ->orderBy('school', 'asc')
-                ->groupBy(DB::raw("school"))
-                ->paginate($per_page);
+                                ->select('school', DB::raw("Count('name_of_examinee') as passers"))
+                                ->orderBy($column, $order)
+                                ->orderBy('school', 'asc')
+                                ->groupBy(DB::raw("school"))
+                                ->paginate($per_page);
             }
             else {
                 $school = DB::table('examinee')
-                ->select('school', DB::raw("Count('name_of_examinee') as passers"))
-                ->orderBy($column, $order)
-                ->groupBy(DB::raw("school"))
-                ->paginate($per_page);
+                                ->select('school', DB::raw("Count('name_of_examinee') as passers"))
+                                ->orderBy($column, $order)
+                                ->groupBy(DB::raw("school"))
+                                ->paginate($per_page);
             }
         }
         else {
             $school = DB::table('examinee')
-            ->select('school', DB::raw("Count('name_of_examinee') as passers"))
-            ->orderBy('school')
-            ->groupBy(DB::raw("school"))
-            ->paginate(50);
+                            ->select('school', DB::raw("Count('name_of_examinee') as passers"))
+                            ->orderBy('school')
+                            ->groupBy(DB::raw("school"))
+                            ->paginate(50);
         }
     
         return SchoolResource::collection($school);
@@ -140,7 +140,17 @@ class HomeController extends Controller
                     break;
             }
 
-            $examinees = $this->examinee->orderBy($columnOrder, $order)->paginate($per_page);
+            if ($column == 'examinee') {
+                $examinees = $this->examinee
+                                  ->orderBy($columnOrder, $order)
+                                  ->paginate($per_page);
+            }
+            else {
+                $examinees = $this->examinee
+                                  ->orderBy($columnOrder, $order)
+                                  ->orderBy('name_of_examinee', $order)
+                                  ->paginate($per_page);
+            }
         }
         else {
             $examinees = $this->examinee->all();
@@ -189,7 +199,17 @@ class HomeController extends Controller
                     break;
             }
 
-            $examinees = $this->examinee::where($columnSearch, 'like', $searchTerm)->orderBy($columnOrder, $order)->paginate($per_page);
+            if ($column == 'examinee') {
+                $examinees = $this->examinee::where($columnSearch, 'like', $searchTerm)
+                                  ->orderBy($columnOrder, $order)
+                                  ->paginate($per_page);
+            }
+            else {
+                $examinees = $this->examinee::where($columnSearch, 'like', $searchTerm)
+                                  ->orderBy($columnOrder, $order)
+                                  ->orderBy('name_of_examinee', $order)
+                                  ->paginate($per_page);
+            }
         }
         else {
             $examinees = $this->examinee->all();
