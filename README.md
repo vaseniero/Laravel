@@ -6,3 +6,5 @@ Passer folder
 - Scrape data on specific website page
 - Save scrape data on db
 - Display data using Vue.js pagination
+- Search and Filter data using Vue.JS
+- Add data using Vue.JS
